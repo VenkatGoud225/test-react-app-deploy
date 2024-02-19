@@ -7,22 +7,29 @@ const SearchComponent = () => {
   const [searchResults, setSearchResults] = useState([]);
 
   const handleSearch = async () => {
-    try {
-      const response = await axios.get('https://api.bing.microsoft.com/v7.0/search?q=${searchTerm}');
-      setSearchResults(response.data);
-    } catch (error) {
-      console.error('Error fetching search results:', error);
-    }
-  };
+    const response = await axios.get(
+        'https://api.cognitive.microsoft.com/bing/v7.0/search?q=${searchTerm}',
+        {
+          headers: {
+            'Ocp-Apim-Subscription-Key': '73529b7a4994ytec8d4ca6c33049',
+          },
+        }
+      );
+      
+      setSearchResults(response.data.webPages.value);
 
   return (
     <div>
-      <input type="text" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+      <input type="text" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} placeholder="Enter your search query"/>
       <button onClick={handleSearch}>Search</button>
       
       <ul>
         {searchResults.map((result) => (
-          <li key={result.id}>{result.name}</li>
+          <li key={result.id}>
+            <a href={result.url} target="_blank" rel="noopener noreferrer">
+              {result.name}
+            </a>
+            </li>
         ))}
       </ul>
     </div>
